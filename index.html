@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediData Analytics — Optimizador de Agenda y Facturación para Clínicas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'medical-blue':  '#1E3A8A',
+            'medical-light': '#EFF6FF',
+            'medical-mid':   '#DBEAFE',
+            'accent':        '#2563EB',
+            'accent-hover':  '#1D4ED8',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 24px 0 rgba(30,58,138,0.08)',
+            'demo': '0 8px 48px 0 rgba(30,58,138,0.14)',
+          },
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* Pulse suave en el badge del Hero */
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.6; }
+    }
+    .pulse-slow { animation: pulse-slow 2.8s ease-in-out infinite; }
+
+    /* Línea decorativa debajo de los títulos de sección */
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 48px;
+      height: 3px;
+      background: #2563EB;
+      border-radius: 2px;
+      margin: 12px auto 0;
+    }
+
+    /* Gradiente sutil en el hero */
+    .hero-gradient {
+      background: linear-gradient(135deg, #0F2461 0%, #1E3A8A 60%, #1D4ED8 100%);
+    }
+
+    /* Línea del pipeline Bronze→Silver→Gold */
+    .pipeline-line {
+      position: relative;
+    }
+    .pipeline-line::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #CD7F32, #C0C0C0, #FFD700);
+      z-index: 0;
+    }
+    .pipeline-node {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body class="font-sans bg-white text-gray-800 antialiased">
+
+  <!-- ========================================================
+       NAVBAR
+  ======================================================== -->
+  <nav class="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+      <!-- Logo / Marca -->
+      <div class="flex items-center gap-2">
+        <!-- Icono SVG tipo pulso médico + datos -->
+        <svg class="w-8 h-8 text-medical-blue" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="#1E3A8A"/>
+          <path d="M4 16h4l3-7 4 14 3-10 3 6 3-3h4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="font-bold text-medical-blue text-lg tracking-tight">MediData<span class="text-accent">Analytics</span></span>
+      </div>
+      <!-- Links -->
+      <div class="hidden md:flex items-center gap-7 text-sm font-medium text-gray-600">
+        <a href="#problemas" class="hover:text-medical-blue transition-colors">Problemas</a>
+        <a href="#demo"      class="hover:text-medical-blue transition-colors">Demo en vivo</a>
+        <a href="#tecnologia" class="hover:text-medical-blue transition-colors">Tecnología</a>
+        <a href="#contacto"  class="hover:text-medical-blue transition-colors">Contacto</a>
+      </div>
+      <!-- CTA Navbar -->
+      <a href="#contacto"
+         class="bg-medical-blue text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-accent-hover transition-colors shadow-sm">
+        Auditoría Gratis
+      </a>
+    </div>
+  </nav>
+
+  <!-- ========================================================
+       HERO SECTION
+  ======================================================== -->
+  <section class="hero-gradient min-h-screen flex items-center pt-20 pb-16">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+
+      <!-- Texto -->
+      <div class="text-white">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6">
+          <span class="w-2 h-2 rounded-full bg-green-400 pulse-slow"></span>
+          <span class="text-xs font-semibold tracking-widest uppercase text-white/80">Analytics en tiempo real</span>
+        </div>
+
+        <!-- Titular principal -->
+        <h1 class="text-4xl md:text-5xl font-extrabold leading-tight mb-5">
+          Tu clínica pierde<br>
+          <span class="text-blue-300">€2.000 al mes</span><br>
+          en huecos vacíos.<br>
+          <span class="underline decoration-blue-400 decoration-2 underline-offset-4">
+            Lo podemos demostrar.
+          </span>
+        </h1>
+
+        <!-- Subtítulo -->
+        <p class="text-blue-100 text-lg leading-relaxed mb-8 max-w-lg">
+          Un sistema automatizado con <strong class="text-white">Python y datos en tiempo real</strong>
+          que detecta no-shows, optimiza tu agenda y revela qué especialidades
+          realmente generan margen — conectado directamente a tu CRM.
+        </p>
+
+        <!-- Botones -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#contacto"
+             class="inline-flex items-center justify-center gap-2 bg-white text-medical-blue font-bold px-7 py-4 rounded-xl hover:bg-blue-50 transition-all shadow-lg text-sm">
+            <!-- Icono WhatsApp -->
+            <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Solicitar Auditoría Gratuita
+          </a>
+          <a href="#demo"
+             class="inline-flex items-center justify-center gap-2 border border-white/30 text-white font-semibold px-7 py-4 rounded-xl hover:bg-white/10 transition-all text-sm">
+            Ver Demo en Vivo
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Social proof mínima -->
+        <p class="mt-8 text-blue-200 text-xs font-medium tracking-wide">
+          Construido por un Analytics Engineer con base en ADE — entendemos el negocio, no solo los datos.
+        </p>
+      </div>
+
+      <!-- Tarjeta de métricas decorativa -->
+      <div class="hidden md:block">
+        <div class="bg-white/10 backdrop-blur border border-white/20 rounded-2xl p-6 shadow-demo space-y-4">
+          <!-- Header tarjeta -->
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-white font-semibold text-sm">Resumen Semanal · Clínica Demo</span>
+            <span class="text-green-400 text-xs font-bold bg-green-400/10 px-2 py-0.5 rounded-full">● En vivo</span>
+          </div>
+          <!-- Métricas -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white/10 rounded-xl p-4">
+              <p class="text-blue-200 text-xs mb-1">Huecos vacíos</p>
+              <p class="text-white text-2xl font-bold">23 <span class="text-red-400 text-sm">↑</span></p>
+              <p class="text-red-300 text-xs">≈ €1.840 perdidos</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-4">
+              <p class="text-blue-200 text-xs mb-1">No-show rate</p>
+              <p class="text-white text-2xl font-bold">18% <span class="text-red-400 text-sm">↑</span></p>
+              <p class="text-red-300 text-xs">Sector: 8-12%</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-4">
+              <p class="text-blue-200 text-xs mb-1">Margen neto</p>
+              <p class="text-white text-2xl font-bold">€ <span class="text-yellow-300">?</span></p>
+              <p class="text-yellow-200 text-xs">Sin datos precisos</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-4">
+              <p class="text-blue-200 text-xs mb-1">Boxes >70% uso</p>
+              <p class="text-white text-2xl font-bold">3/8</p>
+              <p class="text-orange-300 text-xs">5 infrautilizados</p>
+            </div>
+          </div>
+          <!-- Barra de progreso simulada -->
+          <div>
+            <div class="flex justify-between text-xs text-blue-200 mb-1">
+              <span>Ocupación agenda</span><span>61%</span>
+            </div>
+            <div class="w-full bg-white/10 rounded-full h-2">
+              <div class="bg-gradient-to-r from-blue-400 to-blue-300 h-2 rounded-full" style="width:61%"></div>
+            </div>
+          </div>
+          <p class="text-blue-300 text-xs text-center italic">*Datos simulados a efectos demostrativos</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECCIÓN PROBLEMAS
+  ======================================================== -->
+  <section id="problemas" class="py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <!-- Encabezado -->
+      <div class="text-center mb-16">
+        <p class="text-accent font-semibold text-sm tracking-widest uppercase mb-2">¿Te suena familiar?</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-medical-blue section-title">
+          Los 3 problemas que sangran<br>la rentabilidad de tu clínica
+        </h2>
+      </div>
+
+      <!-- Cards -->
+      <div class="grid md:grid-cols-3 gap-8">
+
+        <!-- Card 1: No-shows -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-card hover:shadow-demo hover:-translate-y-1 transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-xl text-gray-900 mb-3">No-shows sin control</h3>
+          <p class="text-gray-500 leading-relaxed text-sm">
+            Entre el <strong class="text-gray-700">15% y el 25%</strong> de las citas se cancelan en el último minuto o
+            directamente no se presentan. Sin predicción automática, ese dinero simplemente desaparece.
+            Cada hueco vacío tiene un coste fijo que alguien tiene que cubrir.
+          </p>
+          <div class="mt-5 pt-5 border-t border-gray-50">
+            <span class="text-red-500 font-semibold text-sm">Coste típico: €80–€200 / hueco vacío</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Margen por especialidad -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-card hover:shadow-demo hover:-translate-y-1 transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-xl text-gray-900 mb-3">Margen por especialidad: desconocido</h3>
+          <p class="text-gray-500 leading-relaxed text-sm">
+            ¿Sabes qué especialidad es tu <strong class="text-gray-700">verdadera vaca lechera</strong> y cuál consume
+            recursos sin generar margen real? Sin cruzar facturación, tiempo de box y coste de personal,
+            estás tomando decisiones estratégicas a ciegas.
+          </p>
+          <div class="mt-5 pt-5 border-t border-gray-50">
+            <span class="text-yellow-600 font-semibold text-sm">Decisiones estratégicas basadas en intuición</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Boxes infrautilizados -->
+        <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-card hover:shadow-demo hover:-translate-y-1 transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-xl text-gray-900 mb-3">Boxes infrautilizados</h3>
+          <p class="text-gray-500 leading-relaxed text-sm">
+            Pagas el alquiler de <strong class="text-gray-700">8 consultas</strong> pero solo 3 funcionan al 70%
+            de capacidad. Los demás son coste fijo puro. Sin visibilidad de ocupación en tiempo real,
+            jamás podrás optimizar turnos ni renegociar espacios.
+          </p>
+          <div class="mt-5 pt-5 border-t border-gray-50">
+            <span class="text-orange-600 font-semibold text-sm">Hasta €3.500/mes en espacio sin retorno</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECCIÓN LIVE DEMO (iframe Streamlit)
+  ======================================================== -->
+  <section id="demo" class="py-24 bg-medical-light">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <!-- Encabezado -->
+      <div class="text-center mb-12">
+        <p class="text-accent font-semibold text-sm tracking-widest uppercase mb-2">Pruébalo ahora mismo</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-medical-blue section-title">
+          Dashboard en Vivo
+        </h2>
+        <p class="mt-5 text-gray-500 max-w-xl mx-auto text-base">
+          Interactúa con el optimizador real. Los datos son de una clínica ficticia pero el motor
+          de análisis es exactamente el mismo que desplegaríamos en tu clínica.
+        </p>
+      </div>
+
+      <!-- Contenedor iframe -->
+      <div class="bg-white rounded-3xl shadow-demo overflow-hidden border border-blue-100">
+
+        <!-- Barra superior decorativa tipo navegador -->
+        <div class="flex items-center gap-2 bg-gray-50 border-b border-gray-100 px-5 py-3">
+          <span class="w-3 h-3 rounded-full bg-red-400"></span>
+          <span class="w-3 h-3 rounded-full bg-yellow-400"></span>
+          <span class="w-3 h-3 rounded-full bg-green-400"></span>
+          <div class="ml-3 flex-1 bg-white border border-gray-200 rounded-md px-3 py-1.5 text-xs text-gray-400 font-mono">
+            <!-- REEMPLAZA LA URL DE ABAJO CON TU APP DE STREAMLIT -->
+            TU_URL_DE_STREAMLIT_AQUÍ
+          </div>
+          <span class="text-xs text-green-600 font-semibold bg-green-50 px-2 py-0.5 rounded-full">● Seguro</span>
+        </div>
+
+        <!--
+          ============================================================
+          IFRAME DE STREAMLIT
+          ============================================================
+          INSTRUCCIONES:
+          1. Despliega tu app en Streamlit Cloud (share.streamlit.io)
+          2. Copia la URL pública de tu app
+          3. Pégala en el atributo src="" del iframe de abajo
+          4. Elimina el div "placeholder-demo" que está debajo del iframe
+          ============================================================
+        -->
+        <iframe
+          id="streamlit-demo"
+          src="PEGA_AQUI_TU_URL_DE_STREAMLIT"
+          width="100%"
+          height="700"
+          frameborder="0"
+          allow="fullscreen"
+          title="Demo en vivo — Optimizador de Agenda y Facturación"
+          class="block"
+          style="display:none;"
+        ></iframe>
+
+        <!-- Placeholder visual mientras no tienes la URL (bórralo cuando tengas tu URL) -->
+        <div id="placeholder-demo" class="flex flex-col items-center justify-center h-96 text-center px-8 bg-gradient-to-br from-medical-light to-white">
+          <div class="w-16 h-16 rounded-2xl bg-medical-blue/10 flex items-center justify-center mb-4">
+            <svg class="w-8 h-8 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-medical-blue text-lg mb-2">Demo interactiva próximamente</h3>
+          <p class="text-gray-400 text-sm max-w-sm">
+            Pega la URL de tu app de Streamlit en el atributo <code class="bg-gray-100 px-1 rounded text-xs">src</code> del
+            <code class="bg-gray-100 px-1 rounded text-xs">&lt;iframe&gt;</code> en este archivo HTML.
+          </p>
+          <a href="#contacto"
+             class="mt-6 inline-flex items-center gap-2 bg-medical-blue text-white text-sm font-semibold px-6 py-3 rounded-xl hover:bg-accent-hover transition-colors">
+            Solicita acceso anticipado →
+          </a>
+        </div>
+
+      </div>
+      <!-- Nota de privacidad -->
+      <p class="text-center text-gray-400 text-xs mt-4">
+        Los datos del demo son 100% ficticios. Ningún dato real de pacientes es procesado en esta demo pública.
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       SECCIÓN TÉCNICA — ARQUITECTURA DE DATOS
+  ======================================================== -->
+  <section id="tecnologia" class="py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+
+        <!-- Texto izquierda -->
+        <div>
+          <p class="text-accent font-semibold text-sm tracking-widest uppercase mb-2">Por qué no es un Excel</p>
+          <h2 class="text-3xl md:text-4xl font-extrabold text-medical-blue mb-6">
+            Ingeniería de datos<br>con lógica de negocio
+          </h2>
+          <p class="text-gray-500 leading-relaxed mb-6">
+            No es un informe estático que caducará en 24 horas. Es un
+            <strong class="text-gray-700">flujo de datos continuo</strong> que se actualiza automáticamente
+            desde tu CRM y sistema de citas, transforma los datos con reglas de negocio médicas
+            y entrega respuestas listas para tomar decisiones.
+          </p>
+
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-accent/10 flex-shrink-0 flex items-center justify-center mt-0.5">
+                <svg class="w-3.5 h-3.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <p class="text-gray-600 text-sm"><strong class="text-gray-800">Conexión directa al CRM:</strong> sin exportaciones manuales, sin "dame el Excel de esta semana".</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-accent/10 flex-shrink-0 flex items-center justify-center mt-0.5">
+                <svg class="w-3.5 h-3.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <p class="text-gray-600 text-sm"><strong class="text-gray-800">Métricas accionables:</strong> no solo "cuántas citas hay", sino cuál especialista tiene el mejor margen neto por hora.</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-accent/10 flex-shrink-0 flex items-center justify-center mt-0.5">
+                <svg class="w-3.5 h-3.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+              </div>
+              <p class="text-gray-600 text-sm"><strong class="text-gray-800">Formación ADE + Datos:</strong> el sistema entiende el lenguaje financiero que importa a dirección.</p>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Pipeline Bronze → Silver → Gold -->
+        <div class="space-y-5">
+
+          <!-- Nodo Bronze -->
+          <div class="bg-gradient-to-r from-amber-50 to-white border border-amber-100 rounded-2xl p-6 shadow-card">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                   style="background: linear-gradient(135deg,#CD7F32,#b5651d);">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                </svg>
+              </div>
+              <div>
+                <span class="text-xs font-bold tracking-widest uppercase text-amber-700">Capa Bronze</span>
+                <h4 class="font-bold text-gray-900 text-base">Ingestión raw de datos</h4>
+                <p class="text-gray-500 text-xs mt-0.5">CRM · Software de citas · Facturación · HRs</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Flecha -->
+          <div class="flex justify-center">
+            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </div>
+
+          <!-- Nodo Silver -->
+          <div class="bg-gradient-to-r from-gray-50 to-white border border-gray-100 rounded-2xl p-6 shadow-card">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                   style="background: linear-gradient(135deg,#C0C0C0,#a0a0a0);">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+              </div>
+              <div>
+                <span class="text-xs font-bold tracking-widest uppercase text-gray-500">Capa Silver</span>
+                <h4 class="font-bold text-gray-900 text-base">Transformación y limpieza</h4>
+                <p class="text-gray-500 text-xs mt-0.5">Python · Pandas · Reglas de negocio médico · Deduplicación</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Flecha -->
+          <div class="flex justify-center">
+            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+          </div>
+
+          <!-- Nodo Gold -->
+          <div class="bg-gradient-to-r from-yellow-50 to-white border border-yellow-100 rounded-2xl p-6 shadow-card">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                   style="background: linear-gradient(135deg,#FFD700,#f0b000);">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                </svg>
+              </div>
+              <div>
+                <span class="text-xs font-bold tracking-widest uppercase text-yellow-700">Capa Gold</span>
+                <h4 class="font-bold text-gray-900 text-base">KPIs listos para dirección</h4>
+                <p class="text-gray-500 text-xs mt-0.5">Dashboard · Alertas automáticas · Informes en PDF</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       CTA / CONTACTO
+  ======================================================== -->
+  <section id="contacto" class="py-24 hero-gradient">
+    <div class="max-w-4xl mx-auto px-6">
+
+      <div class="text-center mb-12">
+        <p class="text-blue-300 font-semibold text-sm tracking-widest uppercase mb-3">Sin compromiso</p>
+        <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
+          Auditoría de Datos Gratuita<br>para tu Clínica
+        </h2>
+        <p class="text-blue-100 text-base max-w-lg mx-auto">
+          En 30 minutos analizamos tus datos actuales y te decimos exactamente cuánto
+          estás dejando sobre la mesa. Sin tecnicismos, con impacto en euros.
+        </p>
+      </div>
+
+      <!-- Formulario + WhatsApp -->
+      <div class="bg-white rounded-3xl shadow-demo p-8 md:p-12">
+        <div class="grid md:grid-cols-2 gap-8">
+
+          <!-- Formulario simple -->
+          <div>
+            <h3 class="font-bold text-medical-blue text-lg mb-5">Déjame tus datos</h3>
+            <form
+              action="https://formspree.io/f/REEMPLAZA_CON_TU_ID_DE_FORMSPREE"
+              method="POST"
+              class="space-y-4"
+            >
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nombre completo *</label>
+                <input type="text" name="nombre" required placeholder="Dra. García"
+                  class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Correo electrónico *</label>
+                <input type="email" name="email" required placeholder="gerente@clinica.es"
+                  class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nombre de la clínica</label>
+                <input type="text" name="clinica" placeholder="Clínica San Rafael"
+                  class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">¿Cuál es tu mayor dolor ahora mismo?</label>
+                <textarea name="mensaje" rows="3" placeholder="Ej: Muchos no-shows, no sé qué especialidad renta más..."
+                  class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all resize-none"></textarea>
+              </div>
+              <button type="submit"
+                class="w-full bg-medical-blue text-white font-bold py-4 rounded-xl hover:bg-accent-hover transition-all shadow-md text-sm">
+                Solicitar Auditoría Gratuita →
+              </button>
+            </form>
+          </div>
+
+          <!-- Divisor vertical -->
+          <div class="flex flex-col items-center justify-start md:border-l md:border-gray-100 md:pl-8">
+            <h3 class="font-bold text-medical-blue text-lg mb-5 w-full">O escríbeme directo</h3>
+
+            <!-- WhatsApp -->
+            <a href="https://wa.me/TUNUMERODETELEFONO?text=Hola%2C%20me%20interesa%20la%20Auditor%C3%ADa%20de%20Datos%20gratuita%20para%20mi%20cl%C3%ADnica"
+               target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-4 w-full bg-green-50 border border-green-100 rounded-2xl p-5 hover:bg-green-100 transition-all group">
+              <div class="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="font-bold text-gray-900 text-sm">WhatsApp</p>
+                <p class="text-gray-500 text-xs">Respuesta en menos de 2h</p>
+                <!-- REEMPLAZA con tu número en formato internacional (sin + ni espacios) -->
+                <p class="text-green-600 font-semibold text-xs mt-0.5">+34 600 000 000</p>
+              </div>
+            </a>
+
+            <!-- LinkedIn -->
+            <a href="https://linkedin.com/in/TUPERFIL"
+               target="_blank" rel="noopener noreferrer"
+               class="flex items-center gap-4 w-full bg-blue-50 border border-blue-100 rounded-2xl p-5 mt-4 hover:bg-blue-100 transition-all group">
+              <div class="w-12 h-12 rounded-xl bg-[#0A66C2] flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="font-bold text-gray-900 text-sm">LinkedIn</p>
+                <p class="text-gray-500 text-xs">Perfil profesional verificado</p>
+              </div>
+            </a>
+
+            <!-- Garantía -->
+            <div class="mt-6 bg-gray-50 rounded-xl p-4 w-full">
+              <p class="text-xs text-gray-500 text-center leading-relaxed">
+                <strong class="text-gray-700">Sin spam. Sin venta agresiva.</strong><br>
+                La auditoría es real y gratuita. Si no hay valor para tu clínica, te lo digo directamente.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       FOOTER
+  ======================================================== -->
+  <footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+
+        <!-- Columna 1: Marca -->
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <svg class="w-7 h-7" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="32" height="32" rx="8" fill="#1E3A8A"/>
+              <path d="M4 16h4l3-7 4 14 3-10 3 6 3-3h4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="font-bold text-white">MediData<span class="text-blue-400">Analytics</span></span>
+          </div>
+          <p class="text-sm leading-relaxed">
+            Optimización financiera para clínicas médicas mediante ingeniería de datos.
+            Analytics Engineer · ADE · Python · SQL.
+          </p>
+        </div>
+
+        <!-- Columna 2: Links rápidos -->
+        <div>
+          <h4 class="text-white font-semibold text-sm mb-4">Navegación</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#problemas"  class="hover:text-white transition-colors">Problemas que resolvemos</a></li>
+            <li><a href="#demo"       class="hover:text-white transition-colors">Demo en vivo</a></li>
+            <li><a href="#tecnologia" class="hover:text-white transition-colors">Arquitectura de datos</a></li>
+            <li><a href="#contacto"   class="hover:text-white transition-colors">Auditoría gratuita</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna 3: Contacto -->
+        <div>
+          <h4 class="text-white font-semibold text-sm mb-4">Contacto directo</h4>
+          <ul class="space-y-3 text-sm">
+            <li>
+              <a href="mailto:TU_EMAIL@gmail.com" class="flex items-center gap-2 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                TU_EMAIL@gmail.com
+              </a>
+            </li>
+            <li>
+              <a href="https://wa.me/TUNUMERODETELEFONO" class="flex items-center gap-2 hover:text-white transition-colors">
+                <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                WhatsApp directo
+              </a>
+            </li>
+            <li>
+              <a href="https://linkedin.com/in/TUPERFIL" class="flex items-center gap-2 hover:text-white transition-colors">
+                <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                LinkedIn
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Línea inferior -->
+      <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+        <p>© 2025 MediData Analytics · Todos los derechos reservados</p>
+        <p class="text-gray-600">Construido con Python · Streamlit · Ingeniería de datos</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script para mostrar el iframe si la URL ha sido configurada -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const iframe = document.getElementById('streamlit-demo');
+      const placeholder = document.getElementById('placeholder-demo');
+      const placeholder_url_bar = document.querySelector('.font-mono');
+
+      // Muestra el iframe automáticamente si la URL ya fue configurada
+      if (iframe && iframe.src && iframe.src !== 'PEGA_AQUI_TU_URL_DE_STREAMLIT' && !iframe.src.includes('PEGA_AQUI')) {
+        iframe.style.display = 'block';
+        if (placeholder) placeholder.style.display = 'none';
+        if (placeholder_url_bar) placeholder_url_bar.textContent = iframe.src;
+      }
+    });
+  </script>
+
+</body>
+</html>
