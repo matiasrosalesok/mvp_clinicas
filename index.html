@@ -331,18 +331,18 @@
         -->
         <iframe
           id="streamlit-demo"
-          src="PEGA_AQUI_TU_URL_DE_STREAMLIT"
+          src="https://mvpclinicas-kzdb5hkfims45mdrwxm88h.streamlit.app/?embed=true"
           width="100%"
           height="700"
           frameborder="0"
           allow="fullscreen"
           title="Demo en vivo — Optimizador de Agenda y Facturación"
           class="block"
-          style="display:none;"
+          style="display:block;"
         ></iframe>
 
         <!-- Placeholder visual mientras no tienes la URL (bórralo cuando tengas tu URL) -->
-        <div id="placeholder-demo" class="flex flex-col items-center justify-center h-96 text-center px-8 bg-gradient-to-br from-medical-light to-white">
+        <div id="placeholder-demo" style="display:none;" class="flex flex-col items-center justify-center h-96 text-center px-8 bg-gradient-to-br from-medical-light to-white">
           <div class="w-16 h-16 rounded-2xl bg-medical-blue/10 flex items-center justify-center mb-4">
             <svg class="w-8 h-8 text-medical-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -678,10 +678,8 @@
       const placeholder_url_bar = document.querySelector('.font-mono');
 
       // Muestra el iframe automáticamente si la URL ya fue configurada
-      if (iframe && iframe.src && iframe.src !== 'PEGA_AQUI_TU_URL_DE_STREAMLIT' && !iframe.src.includes('PEGA_AQUI')) {
-        iframe.style.display = 'block';
-        if (placeholder) placeholder.style.display = 'none';
-        if (placeholder_url_bar) placeholder_url_bar.textContent = iframe.src;
+      if (placeholder_url_bar && iframe && iframe.src) {
+        placeholder_url_bar.textContent = iframe.src;
       }
     });
   </script>
